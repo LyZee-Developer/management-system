@@ -14,4 +14,5 @@ public class TargetExpenseDataModel extends BaseDataModel{
     private String nameKh;
     private String nameEn;
     private String description;
+    private Boolean isActivate;
 }

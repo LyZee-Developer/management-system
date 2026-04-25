@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -16,6 +18,7 @@ import com.seng.management_system.mapper.generateExpense.TargetExpenseMapper;
 import com.seng.management_system.model.generateExpense.TargetExpense;
 import com.seng.management_system.repository.generateExpense.TargetExpenseRepository;
 import com.seng.management_system.service.TargetExpenseService;
+import com.seng.management_system.specification.TargetExpenseSpecification;
 
 @Service
 class TargetExpenseServiceImpl implements TargetExpenseService {
@@ -23,8 +26,10 @@ class TargetExpenseServiceImpl implements TargetExpenseService {
     TargetExpenseRepository targetExpenseRepository;
 
     @Override
-    public Page<TargetExpenseDTO> list(TargetExpenseFilterDataModel filter){
-        return Page.empty();
+    public Page<TargetExpenseDTO> list(TargetExpenseFilterDataModel filter , Pageable pageable){
+        Specification<TargetExpense> spec = TargetExpenseSpecification.build(filter);
+        Page<TargetExpense> result = targetExpenseRepository.findAll(spec ,pageable);
+        return result.map(TargetExpenseMapper::toDTO);
     }
 
     @Override
@@ -44,6 +49,7 @@ class TargetExpenseServiceImpl implements TargetExpenseService {
     }
 
     private TargetExpense updateData(TargetExpense data,TargetExpenseDataModel model){
+       
         data.setNameEn(model.getNameEn());
         data.setNameKh(model.getNameKh());
         data.setDescription(model.getDescription());
@@ -56,7 +62,6 @@ class TargetExpenseServiceImpl implements TargetExpenseService {
             data.setUpdateBy(GlobalHelper.ADMIN);
             data.setUpdateDate(new Date());
         }
-        data.setCreateDate(new Date());
         return data;
     }
 }

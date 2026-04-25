@@ -11,5 +11,5 @@ public class BaseDataModel {
     private Date createDate;
     private String updatedBy;
     private Date updatedDate;
-    private Boolean isActivate;
+ 
 }

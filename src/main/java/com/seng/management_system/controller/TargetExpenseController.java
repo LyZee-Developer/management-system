@@ -1,8 +1,9 @@
 package com.seng.management_system.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,9 +36,8 @@ public class TargetExpenseController {
     TargetExpenseService targetExpenseService;
 
     @GetMapping
-    public ResponseEntity<Object> list(TargetExpenseFilterDataModel filter){
-        List<String> result = List.of("123","33");
-        return ResponseEntity.ok(ApiResponse.success(result));
+    public ResponseEntity<Object> list(TargetExpenseFilterDataModel filter,@PageableDefault(page=0,size=10,direction=Sort.Direction.DESC,sort = "id") Pageable pageable){
+        return ResponseEntity.ok(ApiResponse.success(targetExpenseService.list(filter,pageable)));
     }
 
     @PostMapping
