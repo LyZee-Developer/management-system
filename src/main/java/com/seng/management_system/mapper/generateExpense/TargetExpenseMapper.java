@@ -10,6 +10,7 @@ public class TargetExpenseMapper {
         dto.setDescription(entity.getDescription());
         dto.setNameEn(entity.getNameEn());
         dto.setNameKh(entity.getNameKh());
+        dto.setId(entity.getId());
         return dto;
     }
 

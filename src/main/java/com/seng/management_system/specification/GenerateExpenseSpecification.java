@@ -5,14 +5,14 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.seng.management_system.DataModel.generateExpense.targetExpense.TargetExpenseFilterDataModel;
-import com.seng.management_system.model.generateExpense.TargetExpense;
+import com.seng.management_system.DataModel.generateExpense.generateExpense.GenerateExpenseFilterDataModel;
+import com.seng.management_system.model.generateExpense.GenerateExpense;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.criteria.Predicate;
 
-public class TargetExpenseSpecification {
-    public static Specification<TargetExpense> build(TargetExpenseFilterDataModel filter){
+public class GenerateExpenseSpecification {
+    public static Specification<GenerateExpense> build(GenerateExpenseFilterDataModel filter){
         return (root,query,cb) -> {
                 List<Predicate> predicates = new ArrayList<>();
                 predicates.add(cb.equal(root.get("isActivate"), Boolean.TRUE));

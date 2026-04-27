@@ -1,7 +1,9 @@
 package com.seng.management_system.model.generateExpense;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.seng.management_system.model.BaseActivateEnity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.seng.management_system.model.IsActivateEnity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,16 +17,18 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-public class TargetItem extends BaseActivateEnity  {
+public class TargetItem extends IsActivateEnity{
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     private Double percent;
     @ManyToOne(fetch=FetchType.LAZY)
+    @JsonIncludeProperties({"description","nameKh","nameEn","id"})
     private TargetExpense targetExpense;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JsonBackReference
+    @JsonIgnore
     private GenerateExpense generateExpense;
 
 }

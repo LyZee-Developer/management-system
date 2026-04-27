@@ -36,7 +36,7 @@ public class TargetExpenseController {
     TargetExpenseService targetExpenseService;
 
     @GetMapping
-    public ResponseEntity<Object> list(TargetExpenseFilterDataModel filter,@PageableDefault(page=0,size=10,direction=Sort.Direction.DESC,sort = "id") Pageable pageable){
+    public ResponseEntity<Object> list(@RequestBody TargetExpenseFilterDataModel filter,@PageableDefault(page=0,size=10,direction=Sort.Direction.DESC,sort = "id") Pageable pageable){
         return ResponseEntity.ok(ApiResponse.success(targetExpenseService.list(filter,pageable)));
     }
 
