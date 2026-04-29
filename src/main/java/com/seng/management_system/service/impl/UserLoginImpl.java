@@ -4,18 +4,25 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.seng.management_system.DataModel.UserLoginDataModel;
+import com.seng.management_system.DataModel.UserLoginFilterDataModel;
 import com.seng.management_system.constant.TrackUserAccessConstant;
+import com.seng.management_system.dto.UserWithAccessDTO;
 import com.seng.management_system.exception.ApiException;
+import com.seng.management_system.mapper.UserLoginMapper;
 import com.seng.management_system.model.TrackUserAccess;
 import com.seng.management_system.model.UserLogin;
 import com.seng.management_system.repository.TrackUserAccessRepository;
 import com.seng.management_system.repository.UserLoginRepository;
 import com.seng.management_system.service.UserLoginService;
+import com.seng.management_system.specification.UserLoginSpecification;
 @Service
 public class UserLoginImpl implements UserLoginService {
 
@@ -80,6 +87,13 @@ public class UserLoginImpl implements UserLoginService {
         userLogin.setIsActivate(Boolean.FALSE);
         userLoginRepository.save(userLogin);
         return true;
+    }
+
+    @Override
+    public Page<UserWithAccessDTO> getUserAccessSystem(UserLoginFilterDataModel filter ,Pageable pageable){
+        Specification<UserLogin> spec =  UserLoginSpecification.buildFilter(filter);
+        Page<UserLogin> data = userLoginRepository.findAll(spec,pageable);
+        return data.map(UserLoginMapper::MapToDto);
     }
 
 }

@@ -2,6 +2,8 @@ package com.seng.management_system.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,6 +25,7 @@ public class TrackUserAccess{
     
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn
+    @JsonBackReference
     private UserLogin userLogin;
     private LocalDateTime date;
     @Column(nullable=false)
