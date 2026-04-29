@@ -12,8 +12,8 @@ public class ChatController {
     // Server broadcasts to: /topic/messages
     @MessageMapping("/send")
     @SendTo("/topic/messages")
-    public ChatMessage sendMessage(ChatMessage message) {
+    public String sendMessage(ChatMessage message) {
         message.setContent("Server: " + message.getContent());
-        return message;
+        return "Hello Bro : " + message.getContent();
     }
 }
