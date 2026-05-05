@@ -23,31 +23,37 @@ import jakarta.validation.constraints.Positive;
 @RestController
 @RequestMapping(ApiPath.USER_LOGIN)
 public class UserLoginController {
-    
+
     @Autowired
     private UserLoginService userLoginService;
-    @PostMapping
-    public ResponseEntity<Object> create(@Valid @RequestBody UserLoginDataModel model){
+
+    @PostMapping("/register")
+    public ResponseEntity<Object> create(@Valid @RequestBody UserLoginDataModel model) {
         return ResponseEntity.ok(ApiResponse.success(userLoginService.create(model)));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> isLoginSuccess(@Valid @RequestBody UserLoginDataModel model){
+    public ResponseEntity<Object> isLoginSuccess(@Valid @RequestBody UserLoginDataModel model) {
         return ResponseEntity.ok(ApiResponse.success(userLoginService.isLoginSuccess(model.getUsername(), model.getPassword())));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> disabledUser(@PathVariable @Positive Long id){
+    public ResponseEntity<Object> disabledUser(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(ApiResponse.success(userLoginService.disabledUser(id)));
     }
-    
+
     @PostMapping("/logout")
-    public ResponseEntity<Object> disabledUser(@RequestBody UserLoginDataModel model){
+    public ResponseEntity<Object> disabledUser(@RequestBody UserLoginDataModel model) {
         return ResponseEntity.ok(ApiResponse.success(userLoginService.isLogout(model.getUsername())));
     }
 
     @PostMapping("/user_online")
-    public ResponseEntity<Object> getUserAccessSystem(UserLoginFilterDataModel filter,@PageableDefault(page=0,size=10) Pageable pageable){
-        return ResponseEntity.ok(ApiResponse.success(userLoginService.getUserAccessSystem(filter,pageable)));
+    public ResponseEntity<Object> getUserAccessSystem(UserLoginFilterDataModel filter, @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success(userLoginService.getUserAccessSystem(filter, pageable)));
+    }
+
+    @GetMapping("/user_info/{id}")
+    public ResponseEntity<Object> getUserLogin(@Positive @PathVariable(name = "id") long userLoginId) {
+        return ResponseEntity.ok(ApiResponse.success(userLoginService.getUserLogin(userLoginId)));
     }
 }

@@ -21,7 +21,7 @@ import lombok.Setter;
     @Entity
     @Setter
     @Getter
-    public class Bug extends BaseActivateEnity{
+    public class Bug extends BaseActivateEntity{
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;

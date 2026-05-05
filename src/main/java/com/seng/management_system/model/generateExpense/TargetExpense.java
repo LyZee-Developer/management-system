@@ -1,6 +1,6 @@
 package com.seng.management_system.model.generateExpense;
 
-import com.seng.management_system.model.BaseActivateEnity;
+import com.seng.management_system.model.BaseActivateEntity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +12,7 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-public class TargetExpense extends BaseActivateEnity  {
+public class TargetExpense extends BaseActivateEntity  {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;

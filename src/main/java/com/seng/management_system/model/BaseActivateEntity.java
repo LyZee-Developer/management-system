@@ -6,43 +6,47 @@ import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class BaseActivateEnity extends IsActivateEnity {
-    @Column(nullable=false)
+public class BaseActivateEntity extends IsActivateEnity {
+
+    @Column(nullable = false)
     private String createBy;
+
     private String updateBy;
-    @Column(nullable=false)
+
+    @Column(nullable = false)
     private Date createDate;
+
     private Date updateDate;
 
-    public void setCreateBy(String createBy){
+    public void setCreateBy(String createBy) {
         this.createBy = createBy;
     }
 
-    public void setUpdateBy(String updateBy){
+    public void setUpdateBy(String updateBy) {
         this.updateBy = updateBy;
     }
 
-    public void setCreateDate(Date createDate){
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 
-    public void setUpdateDate(Date updateDate){
+    public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
 
-    public String getCreateBy(){
+    public String getCreateBy() {
         return this.createBy;
     }
 
-    public String getUpdateBy(){
+    public String getUpdateBy() {
         return this.updateBy;
     }
 
-    public Date getCreateDate(){
+    public Date getCreateDate() {
         return this.createDate;
     }
 
-    public Date getUpdateDate(){
+    public Date getUpdateDate() {
         return this.updateDate;
     }
 

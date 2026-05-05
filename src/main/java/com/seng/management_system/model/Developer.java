@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @JsonIncludeProperties({"id","position","nameKh","nameEn"})
-public class Developer  extends BaseActivateEnity{
+public class Developer  extends BaseActivateEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

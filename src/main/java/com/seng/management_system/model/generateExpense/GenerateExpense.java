@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.seng.management_system.model.BaseActivateEnity;
+import com.seng.management_system.model.BaseActivateEntity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,7 +18,7 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-public class GenerateExpense extends BaseActivateEnity  {
+public class GenerateExpense extends BaseActivateEntity  {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
