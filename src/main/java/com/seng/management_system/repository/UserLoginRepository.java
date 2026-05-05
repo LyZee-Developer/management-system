@@ -8,8 +8,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.seng.management_system.model.UserLogin;
 
-public interface UserLoginRepository extends  JpaRepository<UserLogin, Long> , JpaSpecificationExecutor<UserLogin>{
+public interface UserLoginRepository extends JpaRepository<UserLogin, Long>, JpaSpecificationExecutor<UserLogin> {
+
     List<UserLogin> findByUsernameAndPassword(String username, String password);
+
     Optional<UserLogin> findByUsername(String name);
-    Optional<UserLogin> findByUsernameAndIsActivate(String username,boolean isActivate);
+
+    boolean existsByUsername(String name);
+
+    Optional<UserLogin> findByUsernameAndIsActivate(String username, boolean isActivate);
 }

@@ -7,5 +7,7 @@ import com.seng.management_system.model.UserInfo;
 
 public interface UserInfoRepository extends JpaRepository<UserInfo, Long>, JpaSpecificationExecutor<UserInfo> {
 
+    UserInfo findByName(String name);
+
     UserInfo findByUserLoginId(Long id);
 }
