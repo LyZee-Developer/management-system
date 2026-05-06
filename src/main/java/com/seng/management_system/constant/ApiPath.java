@@ -7,5 +7,6 @@ public interface ApiPath {
     String BUG = "api/bug";
     String GENERATE_EXPENSE = "api/generate_expense";
     String TARGET_EXPENSE = "api/target_expense";
-    String USER_LOGIN = "api/user_login";
+    String USER_LOGIN = "/user_login";
+    String AUTH = "api/auth";
 }

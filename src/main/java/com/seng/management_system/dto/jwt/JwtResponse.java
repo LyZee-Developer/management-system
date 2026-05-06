@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class JwtResponse {
 
+    private Long id;
     private String token;
     private String username;
     private Date expiredAt;

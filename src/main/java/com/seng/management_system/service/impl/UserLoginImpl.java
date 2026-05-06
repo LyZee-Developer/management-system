@@ -2,6 +2,7 @@ package com.seng.management_system.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import com.seng.management_system.DataModel.UserLoginDataModel;
@@ -65,22 +67,21 @@ public class UserLoginImpl implements UserLoginService {
     public Long isLoginSuccess(String username, String password) {
         UserLogin userLogin = userLoginRepository.findByUsernameAndIsActivate(username, Boolean.TRUE).orElseThrow(() -> new ApiException("username not found!"));
         boolean isCorrect = passwordEncoder.matches(password, userLogin.getPassword());
-        // if(isCorrect){
-        //     TrackUserAccess userAccess = new TrackUserAccess();
-        //     List<TrackUserAccess> userAc = trackUserAccessRepository.findByUserLoginIdOrderByIdDesc(userLogin.getId());
-        //     if(CollectionUtils.isEmpty(userAc)){
-        //         userAccess.setType(TrackUserAccessConstant.OPEN);
-        //     }else{
-        //         String Status = userAc.getFirst().getType();
-        //         if(Status.equals(TrackUserAccessConstant.OPEN)){
-        //             throw new ApiException("Currently, User is online!");
-        //         }
-        //         userAccess.setType(TrackUserAccessConstant.OPEN);
-        //     }
-        //     userAccess.setUserLogin(userLogin);
-        //     userAccess.setDate(LocalDateTime.now());
-        //     trackUserAccessRepository.save(userAccess);
-        // }
+        if (isCorrect) {
+            TrackUserAccess userAccess = new TrackUserAccess();
+            List<TrackUserAccess> userAc = trackUserAccessRepository.findByUserLoginIdOrderByIdDesc(userLogin.getId());
+            if (CollectionUtils.isEmpty(userAc)) {
+                userAccess.setType(TrackUserAccessConstant.OPEN);
+            } else {
+                String Status = userAc.getFirst().getType();
+                if (!Status.equals(TrackUserAccessConstant.OPEN)) {
+                    userAccess.setType(TrackUserAccessConstant.OPEN);
+                }
+            }
+            userAccess.setUserLogin(userLogin);
+            userAccess.setDate(LocalDateTime.now());
+            trackUserAccessRepository.save(userAccess);
+        }
         Long id = Optional.ofNullable(userLogin.getId()).orElse(0L);
         return isCorrect ? id : 0L;
     }
@@ -108,7 +109,10 @@ public class UserLoginImpl implements UserLoginService {
     public Page<UserWithAccessDTO> getUserAccessSystem(UserLoginFilterDataModel filter, Pageable pageable) {
         Specification<UserLogin> spec = UserLoginSpecification.buildFilter(filter);
         Page<UserLogin> data = userLoginRepository.findAll(spec, pageable);
-        return data.map(UserLoginMapper::MapToDto);
+        return data.map(s -> {
+            UserInfo user = userInfoRepository.findByUserLoginId(s.getId());
+            return UserLoginMapper.MapToDto(s, user);
+        });
     }
 
     @Override

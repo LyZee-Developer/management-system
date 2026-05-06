@@ -28,12 +28,15 @@ public class UserLogin extends IsActivateEnity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable=false,unique = true)
     private String username;
+
     @Column(nullable=false)
     private String password;
     private int attempt;
     private LocalDateTime signInDate;
+    
     @OneToMany(mappedBy="userLogin")
     @JsonManagedReference
     @OrderBy("id DESC")

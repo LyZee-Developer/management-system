@@ -3,10 +3,13 @@ package com.seng.management_system.service.jwt;
 import java.security.Key;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.seng.management_system.dto.jwt.JwtResponse;
+import com.seng.management_system.model.UserLogin;
+import com.seng.management_system.repository.UserLoginRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -21,6 +24,9 @@ public class JwtService {
 
     @Value("${jwt.expiration}")
     private long expiration;
+
+    @Autowired
+    UserLoginRepository userLoginRepository;
 
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
@@ -37,8 +43,9 @@ public class JwtService {
                 .setExpiration(expiryDate)
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
-
+        Long id = userLoginRepository.findByUsername(username).map(UserLogin::getId).orElse(0L);
         return new JwtResponse(
+                id,
                 token,
                 username,
                 expiryDate,

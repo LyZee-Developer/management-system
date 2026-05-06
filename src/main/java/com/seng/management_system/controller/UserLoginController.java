@@ -4,9 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,9 +45,13 @@ public class UserLoginController {
         return ResponseEntity.ok(ApiResponse.success(userLoginService.disabledUser(id)));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Object> disabledUser(@RequestBody UserLoginDataModel model) {
-        return ResponseEntity.ok(ApiResponse.success(userLoginService.isLogout(model.getUsername())));
+    @GetMapping("/logout")
+    public ResponseEntity<Object> logout() {
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+        return ResponseEntity.ok(ApiResponse.success(userLoginService.isLogout(username)));
     }
 
     @PostMapping("/user_online")
