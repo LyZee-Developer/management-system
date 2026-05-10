@@ -7,7 +7,11 @@ import com.seng.management_system.model.chat.Chat;
 
 public interface ChatService {
 
-    Chat create(ChatDataModel model);
+    String create(ChatDataModel model);
+
+    String addUserToChat(List<Long> userIds, Long chatId);
+
+    String seenChat(Long messageId, Long userId);
 
     List<Chat> list();
 
@@ -15,7 +19,7 @@ public interface ChatService {
 
     boolean block();
 
-    boolean changeRoomName(ChatDataModel.ChatUpdateModel model);
+    boolean changeRoomName(ChatDataModel model);
 
     boolean pin();
 

@@ -1,5 +1,6 @@
 package com.seng.management_system.controller;
 
+import com.seng.management_system.data_model.chat.ChatDataModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.seng.management_system.apiResponse.ApiResponse;
 import com.seng.management_system.constant.ApiPath;
-import com.seng.management_system.data_model.chat.ChatDataModel;
 import com.seng.management_system.service.ChatService;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(ApiPath.CHAT)
@@ -35,6 +37,20 @@ public class ChatController {
         return ResponseEntity.ok(ApiResponse.success(chatService.create(model)));
     }
 
+    @PostMapping("/add-user")
+    public ResponseEntity<Object> addUserToChat(@Valid @RequestBody ChatDataModel model) {
+        Long chatId = model.getId();
+        List<Long> userIds = model.getUserIds().stream().toList();
+        return ResponseEntity.ok(ApiResponse.success(chatService.addUserToChat(userIds, chatId)));
+    }
+
+    @PostMapping("/seen")
+    public ResponseEntity<Object> seenMessage(@Valid @RequestBody ChatDataModel model) {
+        Long messageId = model.getMessageId();
+        Long userId = model.getUserId();
+        return ResponseEntity.ok(ApiResponse.success(chatService.seenChat(messageId, userId)));
+    }
+
     @GetMapping("/delete/{id}")
     public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(ApiResponse.success(chatService.delete(id)));
@@ -46,7 +62,7 @@ public class ChatController {
     }
 
     @GetMapping("/changeRoom")
-    public ResponseEntity<Object> changeRoomName(@ModelAttribute ChatDataModel.ChatUpdateModel model) {
+    public ResponseEntity<Object> changeRoomName(@ModelAttribute ChatDataModel model) {
         return ResponseEntity.ok(ApiResponse.success(chatService.changeRoomName(model)));
     }
 

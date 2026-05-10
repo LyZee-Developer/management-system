@@ -22,14 +22,13 @@ public class ChatMessage extends BaseActivateEntity {
     private UserInfo sendBy;
     private Date sendDate;
 
-
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "code")
     private DataRef type;
 
-    private boolean isDelete;
-    private boolean isPin;
+    private boolean isDelete = Boolean.FALSE;
+    private boolean isPin = Boolean.FALSE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference

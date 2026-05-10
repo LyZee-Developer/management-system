@@ -1,25 +1,32 @@
 package com.seng.management_system.data_model.chat;
 
-import jakarta.validation.constraints.NotBlank;
+import com.seng.management_system.data_model.BaseDataModel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Setter
 @Getter
-public class ChatDataModel {
-
+public class ChatDataModel extends BaseDataModel {
     private Long id;
-    private Long senderId;
-    private Long receiverId;
-    @NotBlank(message = "content is required!")
+    private Long sendBy;
+    private Long receiveBy;
+
+
+    // ********* Chat member *********
+    private Set<Long> userIds;
+
+    // ********* ChatMessage *********
+    //seen message
+    private Long messageId;
+    private Long userId;
+
     private String content;
+    private String type; // SOUND, Audio, Video, Image, Other...\
+    private Long parentId; // parent of chat message
 
-    @Setter
-    @Getter
-    public static class ChatUpdateModel {
-
-        private Long id;
+    public static class Room{
         private String roomName;
-
     }
 }

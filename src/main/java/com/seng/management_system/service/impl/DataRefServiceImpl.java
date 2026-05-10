@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.seng.management_system.dto.DataRefDTO;
 import com.seng.management_system.mapper.DataRefMapper;
+import com.seng.management_system.util.AuthenticationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,7 +62,7 @@ public class DataRefServiceImpl implements DataRefService {
     }
 
     private DataRef addNewDataRef(DataRefDataModel model, DataRef parent, boolean isCreate) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String currentUser = AuthenticationUtil.getCurrentUser();
         Date now = new Date();
         DataRef data = new DataRef();
         DataRef parentData = parent;
@@ -72,7 +73,7 @@ public class DataRefServiceImpl implements DataRefService {
         }
 
         data.setCode(model.getCode());
-        data.setCreateBy(auth.getName());
+        data.setCreateBy(currentUser);
         data.setCreateDate(now);
         data.setName(model.getName());
         data.setEnDescription(model.getEnDescription());

@@ -5,9 +5,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.seng.management_system.model.UserInfo;
 
+import java.util.Optional;
+
 public interface UserInfoRepository extends JpaRepository<UserInfo, Long>, JpaSpecificationExecutor<UserInfo> {
 
     UserInfo findByName(String name);
 
     UserInfo findByUserLoginId(Long id);
+
+    Optional<UserInfo> findByUserIdAndIsActivate(Long id, Boolean isActivate);
 }

@@ -28,5 +28,5 @@ public class ChatMember extends BaseActivateEntity {
 
     private boolean isAdmin;
     private boolean isPinChat;
-    private Integer unreadCount;
+    private Integer readCount;
 }
