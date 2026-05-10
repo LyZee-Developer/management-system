@@ -3,8 +3,8 @@ package com.seng.management_system.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.seng.management_system.DataModel.developer.DeveloperDataModel;
-import com.seng.management_system.DataModel.developer.DeveloperFilterDataModel;
+import com.seng.management_system.data_model.developer.DeveloperDataModel;
+import com.seng.management_system.data_model.developer.DeveloperFilterDataModel;
 import com.seng.management_system.dto.DeveloperDto;
 
 

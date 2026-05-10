@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.seng.management_system.DataModel.generateExpense.targetExpense.TargetExpenseDataModel;
-import com.seng.management_system.DataModel.generateExpense.targetExpense.TargetExpenseFilterDataModel;
 import com.seng.management_system.apiResponse.ApiResponse;
 import com.seng.management_system.constant.ApiPath;
+import com.seng.management_system.data_model.generateExpense.target_expense.TargetExpenseDataModel;
+import com.seng.management_system.data_model.generateExpense.target_expense.TargetExpenseFilterDataModel;
 import com.seng.management_system.exception.ApiException;
 import com.seng.management_system.model.generateExpense.TargetExpense;
 import com.seng.management_system.repository.generateExpense.TargetExpenseRepository;

@@ -9,9 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.seng.management_system.DataModel.developer.DeveloperDataModel;
-import com.seng.management_system.DataModel.developer.DeveloperFilterDataModel;
 import com.seng.management_system.constant.GlobalHelper;
+import com.seng.management_system.data_model.developer.DeveloperDataModel;
+import com.seng.management_system.data_model.developer.DeveloperFilterDataModel;
 import com.seng.management_system.dto.DeveloperDto;
 import com.seng.management_system.exception.ApiException;
 import com.seng.management_system.mapper.DeveloperMapper;

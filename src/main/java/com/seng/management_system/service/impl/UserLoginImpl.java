@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import com.seng.management_system.DataModel.UserLoginDataModel;
-import com.seng.management_system.DataModel.UserLoginFilterDataModel;
 import com.seng.management_system.constant.GlobalHelper;
 import com.seng.management_system.constant.TrackUserAccessConstant;
+import com.seng.management_system.data_model.UserLoginDataModel;
+import com.seng.management_system.data_model.UserLoginFilterDataModel;
 import com.seng.management_system.dto.UserWithAccessDTO;
 import com.seng.management_system.exception.ApiException;
 import com.seng.management_system.mapper.UserLoginMapper;

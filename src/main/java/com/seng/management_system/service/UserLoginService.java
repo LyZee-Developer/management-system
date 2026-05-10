@@ -3,8 +3,8 @@ package com.seng.management_system.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.seng.management_system.DataModel.UserLoginDataModel;
-import com.seng.management_system.DataModel.UserLoginFilterDataModel;
+import com.seng.management_system.data_model.UserLoginDataModel;
+import com.seng.management_system.data_model.UserLoginFilterDataModel;
 import com.seng.management_system.dto.UserWithAccessDTO;
 import com.seng.management_system.model.UserInfo;
 

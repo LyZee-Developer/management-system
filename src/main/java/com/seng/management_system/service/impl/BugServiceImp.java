@@ -10,9 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.seng.management_system.DataModel.bug.BugDataModel;
-import com.seng.management_system.DataModel.bug.BugFilterDataModel;
 import com.seng.management_system.constant.GlobalHelper;
+import com.seng.management_system.data_model.bug.BugDataModel;
+import com.seng.management_system.data_model.bug.BugFilterDataModel;
 import com.seng.management_system.dto.BugDto;
 import com.seng.management_system.exception.ApiException;
 import com.seng.management_system.mapper.BugMapper;

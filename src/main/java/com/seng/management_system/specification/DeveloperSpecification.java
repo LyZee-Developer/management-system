@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.seng.management_system.DataModel.developer.DeveloperFilterDataModel;
+import com.seng.management_system.data_model.developer.DeveloperFilterDataModel;
 import com.seng.management_system.model.Developer;
 
 import ch.qos.logback.core.util.StringUtil;

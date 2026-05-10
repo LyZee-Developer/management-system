@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.seng.management_system.DataModel.generateExpense.targetExpense.TargetExpenseFilterDataModel;
+import com.seng.management_system.data_model.generateExpense.target_expense.TargetExpenseFilterDataModel;
 import com.seng.management_system.model.generateExpense.TargetExpense;
 
 import io.micrometer.common.util.StringUtils;

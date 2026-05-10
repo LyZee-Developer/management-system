@@ -1,4 +1,4 @@
-package com.seng.management_system.DataModel;
+package com.seng.management_system.data_model;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;

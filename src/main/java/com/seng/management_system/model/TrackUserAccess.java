@@ -18,16 +18,17 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-public class TrackUserAccess{
+public class TrackUserAccess {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
-    
-    @ManyToOne(fetch=FetchType.LAZY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     @JsonBackReference
     private UserLogin userLogin;
     private LocalDateTime date;
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String type; // Open , Close
 }

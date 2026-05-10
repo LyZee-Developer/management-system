@@ -6,18 +6,16 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.seng.management_system.DataModel.UserLoginDataModel;
-import com.seng.management_system.DataModel.UserLoginFilterDataModel;
 import com.seng.management_system.apiResponse.ApiResponse;
 import com.seng.management_system.constant.ApiPath;
+import com.seng.management_system.data_model.UserLoginDataModel;
+import com.seng.management_system.data_model.UserLoginFilterDataModel;
 import com.seng.management_system.service.UserLoginService;
 
 import jakarta.validation.Valid;

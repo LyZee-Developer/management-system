@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.seng.management_system.DataModel.UserLoginDataModel;
 import com.seng.management_system.apiResponse.ApiResponse;
 import com.seng.management_system.constant.TrackUserAccessConstant;
+import com.seng.management_system.data_model.UserLoginDataModel;
 import com.seng.management_system.dto.jwt.JwtResponse;
 import com.seng.management_system.exception.ApiException;
 import com.seng.management_system.model.TrackUserAccess;

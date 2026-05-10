@@ -1,4 +1,4 @@
-package com.seng.management_system.DataModel.bug;
+package com.seng.management_system.data_model.bug;
 import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;

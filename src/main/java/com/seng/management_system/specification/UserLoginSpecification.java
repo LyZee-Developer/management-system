@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.seng.management_system.DataModel.UserLoginFilterDataModel;
+import com.seng.management_system.data_model.UserLoginFilterDataModel;
 import com.seng.management_system.model.UserLogin;
 
 import jakarta.persistence.criteria.Predicate;
