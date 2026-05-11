@@ -1,6 +1,9 @@
 package com.seng.management_system.controller;
 
 import com.seng.management_system.data_model.chat.ChatDataModel;
+import com.seng.management_system.data_model.chat.ChatFilterDataModel;
+import com.seng.management_system.model.chat.ChatMessage;
+import com.seng.management_system.service.chat.ChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +30,12 @@ public class ChatController {
     @Autowired
     private ChatService chatService;
 
+    @Autowired
+    private ChatMessageService chatMessageService;
+
     @PostMapping("/list")
-    public ResponseEntity<Object> list() {
-        return ResponseEntity.ok(ApiResponse.success(chatService.list()));
+    public ResponseEntity<Object> list(@RequestBody ChatFilterDataModel filter) {
+        return ResponseEntity.ok(ApiResponse.success(chatService.list(filter)));
     }
 
     @PostMapping("/create")
@@ -40,8 +46,9 @@ public class ChatController {
     @PostMapping("/add-user")
     public ResponseEntity<Object> addUserToChat(@Valid @RequestBody ChatDataModel model) {
         Long chatId = model.getId();
+        Long addByUserId = model.getAddByUserId();
         List<Long> userIds = model.getUserIds().stream().toList();
-        return ResponseEntity.ok(ApiResponse.success(chatService.addUserToChat(userIds, chatId)));
+        return ResponseEntity.ok(ApiResponse.success(chatService.addUserToChat(userIds, addByUserId, chatId)));
     }
 
     @PostMapping("/seen")
@@ -64,6 +71,16 @@ public class ChatController {
     @GetMapping("/changeRoom")
     public ResponseEntity<Object> changeRoomName(@ModelAttribute ChatDataModel model) {
         return ResponseEntity.ok(ApiResponse.success(chatService.changeRoomName(model)));
+    }
+
+    @GetMapping("/conversation/{id}")
+    public ResponseEntity<Object> conversation(@PathVariable @Positive Long id) {
+        return ResponseEntity.ok(ApiResponse.success(chatMessageService.conversation(id)));
+    }
+
+    @PostMapping("/conversation/send")
+    public ResponseEntity<Object> sendMessage(@RequestBody ChatDataModel model) {
+        return ResponseEntity.ok(ApiResponse.success(chatService.sendMessage(model)));
     }
 
     @PostMapping("/pin")

@@ -1,5 +1,6 @@
 package com.seng.management_system.model.chat;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.seng.management_system.model.DataRef;
 import com.seng.management_system.model.UserInfo;
 import jakarta.persistence.*;
@@ -17,6 +18,7 @@ public class ReactChatMessage {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIncludeProperties({"id", "email", "name", "phone", "gender"})
     private UserInfo reactBy;
 
     private Date reactDate;

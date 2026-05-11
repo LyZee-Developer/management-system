@@ -1,12 +1,13 @@
 package com.seng.management_system.service.impl.chat;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.seng.management_system.constant.ChatConstant;
 import com.seng.management_system.data_model.chat.ChatDataModel;
+import com.seng.management_system.data_model.chat.ChatFilterDataModel;
 import com.seng.management_system.model.DataRef;
 import com.seng.management_system.model.chat.Chat;
 import com.seng.management_system.model.chat.ChatMember;
@@ -30,8 +31,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import javax.swing.text.html.Option;
-
 @Service
 public class ChatServiceImpl implements ChatService {
 
@@ -53,7 +52,12 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     private ChatMessageRepository chatMessageRepository;
 
-    private Date dateNow = new Date();
+    private final Date dateNow = new Date();
+
+    @Override
+    public List<Chat> list(ChatFilterDataModel filter) {
+        return chatMemberRepository.findByUserIdAndIsActivate(filter.getUserId(), Boolean.TRUE).stream().map(ChatMember::getChat).toList();
+    }
 
     @Override
     @Transactional
@@ -65,7 +69,7 @@ public class ChatServiceImpl implements ChatService {
         UserInfo sender = userInfoRepository.findById(model.getSendBy()).orElseThrow(() -> new ApiException("Sender not found!"));
         UserInfo receiver = null;
 
-        if (!ObjectUtils.isEmpty(model.getId())) {
+        if (!ObjectUtils.isEmpty(model.getReceiveBy())) {
             receiver = userInfoRepository.findById(model.getReceiveBy()).orElseThrow(() -> new ApiException("Receiver not found!"));
         }
 
@@ -86,7 +90,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public String seenChat(Long messageId, Long userId) {
         ChatMessage chatMessage = chatMessageRepository.findById(messageId).orElseThrow(() -> new ApiException("Chat message not found!"));
-        UserInfo user = userInfoRepository.findByUserIdAndIsActivate(userId, Boolean.TRUE).orElseThrow(() -> new ApiException("user info not found!"));
+        UserInfo user = userInfoRepository.findByIdAndIsActivate(userId, Boolean.TRUE).orElseThrow(() -> new ApiException("user info not found!"));
 
         SeenMessage seen = new SeenMessage();
         seen.setChatMessage(chatMessage);
@@ -98,26 +102,46 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public String addUserToChat(List<Long> userIds, Long chatId) {
+    public String sendMessage(ChatDataModel model) {
+        UserInfo sender = userInfoRepository.findById(model.getSendBy()).orElseThrow(() -> new ApiException("Sender not found!"));
+        Chat chat = chatRepository.findByIdAndIsActivate(model.getId(), Boolean.TRUE).orElseThrow(() -> new ApiException("chat not found!"));
+        startMessageByUser(sender, model, chat);
+        return "sent";
+    }
+
+    @Override
+    public String addUserToChat(List<Long> userIds, Long addByUserId, Long chatId) {
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ApiException("chat not found!"));
+        UserInfo addByUser = userInfoRepository.findByIdAndIsActivate(addByUserId, Boolean.TRUE).orElseThrow(() -> new ApiException("chat not found!"));
         List<UserInfo> users = new ArrayList<>();
-        List<ChatMember> userMessages = new ArrayList<>();
+        List<ChatMember> members = new ArrayList<>();
 
         if (userIds.isEmpty()) {
             throw new ApiException("userId must have value!");
         }
 
         for (Long userId : userIds) {
-            UserInfo user = userInfoRepository.findByUserIdAndIsActivate(userId, Boolean.TRUE).orElseThrow(() -> new ApiException("user not found!"));
+            UserInfo user = userInfoRepository.findByIdAndIsActivate(userId, Boolean.TRUE).orElseThrow(() -> new ApiException("user not found!"));
             users.add(user);
         }
 
         // ********** set up user to chat *************
         for (UserInfo userInfo : users) {
-            userMessages.add(setChatMessage(userInfo, chat, Boolean.FALSE));
+            members.add(setChatMember(userInfo, chat, Boolean.FALSE));
+
+            //********** show up the message user that have been added user **********
+            ChatDataModel model = new ChatDataModel();
+
+            model.setType(ChatConstant.ADD);
+            String message = String.format("%s have been added new %s", addByUser.getName(), userInfo.getName());
+            model.setContent(message);
+
+            startMessageByUser(addByUser, model, chat);
         }
 
-        chatMemberRepository.saveAll(userMessages);
+        chatMemberRepository.saveAll(members);
+
+
         return "Add user to chat successfully!";
     }
 
@@ -125,19 +149,19 @@ public class ChatServiceImpl implements ChatService {
     private void setUserWhoChatIn(UserInfo sender, UserInfo receiver, Chat chat) {
         List<ChatMember> saveData = new ArrayList<>();
 
-        ChatMember sendMessage = setChatMessage(sender, chat, Boolean.TRUE);
+        ChatMember sendMessage = setChatMember(sender, chat, Boolean.TRUE);
         saveData.add(sendMessage);
 
         // ************* user chat with self or other user *************
         if (receiver != null) {
-            ChatMember receiveMessage = setChatMessage(receiver, chat, Boolean.FALSE);
+            ChatMember receiveMessage = setChatMember(receiver, chat, Boolean.FALSE);
             saveData.add(receiveMessage);
         }
         chatMemberRepository.saveAll(saveData);
     }
 
     @Transactional
-    private ChatMember setChatMessage(UserInfo user, Chat chat, boolean IsAdmin) {
+    private ChatMember setChatMember(UserInfo user, Chat chat, boolean IsAdmin) {
         ChatMember message = new ChatMember();
 
         message.setUser(user);
@@ -146,6 +170,9 @@ public class ChatServiceImpl implements ChatService {
         message.setAdmin(IsAdmin);
         message.setReadCount(0);
         message.setDateJoin(dateNow);
+        message.setIsActivate(Boolean.TRUE);
+        message.setCreateBy(AuthenticationUtil.getCurrentUser());
+        message.setCreateDate(dateNow);
 
         return message;
     }
@@ -169,13 +196,11 @@ public class ChatServiceImpl implements ChatService {
         message.setType(type);
         message.setParent(parent);
         message.setChat(chat);
+        message.setIsActivate(Boolean.TRUE);
+        message.setCreateBy(AuthenticationUtil.getCurrentUser());
+        message.setCreateDate(dateNow);
 
         chatMessageRepository.save(message);
-    }
-
-    @Override
-    public List<Chat> list() {
-        return new ArrayList<>();
     }
 
     @Override

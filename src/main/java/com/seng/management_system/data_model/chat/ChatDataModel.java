@@ -16,8 +16,9 @@ public class ChatDataModel extends BaseDataModel {
 
     // ********* Chat member *********
     private Set<Long> userIds;
+    private Long addByUserId;
 
-    // ********* ChatMessage *********
+    // ********* chat message *********
     //seen message
     private Long messageId;
     private Long userId;

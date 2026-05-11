@@ -4,5 +4,8 @@ import com.seng.management_system.model.chat.ChatMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface ChatMessageRepository extends JpaRepository<ChatMessage,Long>, JpaSpecificationExecutor<ChatMessage> {
+import java.util.List;
+
+public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long>, JpaSpecificationExecutor<ChatMessage> {
+    List<ChatMessage> findByChatIdAndIsActivate(Long chatId, boolean isActivate);
 }

@@ -15,6 +15,7 @@ public class UserLoginMapper {
         if (!trackUserAccess.isEmpty()) {
             data.setLastAccess(trackUserAccess.getFirst());
         }
+        data.setUserId(user.getId());
         data.setColorName(user.getHex());
         data.setUsername(user.getName());
         return data;

@@ -1,6 +1,7 @@
 package com.seng.management_system.model.chat;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.seng.management_system.model.BaseActivateEntity;
 import com.seng.management_system.model.DataRef;
@@ -15,10 +16,14 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@JsonIncludeProperties({"id", "sendBy", "sendDate", "content", "type", "isPin", "isDelete", "reply", "seenMessages", "reactMessages"})
 public class ChatMessage extends BaseActivateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIncludeProperties({"id", "email", "name", "phone", "gender"})
     private UserInfo sendBy;
     private Date sendDate;
 

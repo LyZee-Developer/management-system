@@ -14,6 +14,7 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
+@JsonIncludeProperties({"id", "code", "name", "enName", "description","child"})
 public class DataRef extends BaseActivateEntity {
 
     @Id

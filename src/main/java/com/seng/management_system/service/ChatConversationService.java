@@ -2,10 +2,10 @@ package com.seng.management_system.service;
 
 public interface ChatConversationService {
 
-    ChatConversation reply();
+//    ChatConversation reply();
 
-    boolean delete();
+    boolean delete();   
 
-    ChatConversation update();
+//    ChatConversation update();
 
 }

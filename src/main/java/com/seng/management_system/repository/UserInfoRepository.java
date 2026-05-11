@@ -13,5 +13,5 @@ public interface UserInfoRepository extends JpaRepository<UserInfo, Long>, JpaSp
 
     UserInfo findByUserLoginId(Long id);
 
-    Optional<UserInfo> findByUserIdAndIsActivate(Long id, Boolean isActivate);
+    Optional<UserInfo> findByIdAndIsActivate(Long id, Boolean isActivate);
 }

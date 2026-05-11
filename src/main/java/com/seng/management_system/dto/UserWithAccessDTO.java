@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 public class UserWithAccessDTO {
 
+    private Long userId;
     private String username;
     private String colorName;
     private TrackUserAccess lastAccess;

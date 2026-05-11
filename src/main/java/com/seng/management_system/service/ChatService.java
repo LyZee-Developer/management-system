@@ -3,17 +3,20 @@ package com.seng.management_system.service;
 import java.util.List;
 
 import com.seng.management_system.data_model.chat.ChatDataModel;
+import com.seng.management_system.data_model.chat.ChatFilterDataModel;
 import com.seng.management_system.model.chat.Chat;
+import com.seng.management_system.model.chat.ChatMember;
 
 public interface ChatService {
 
     String create(ChatDataModel model);
 
-    String addUserToChat(List<Long> userIds, Long chatId);
+    String addUserToChat(List<Long> userIds,Long addByUserId, Long chatId);
 
     String seenChat(Long messageId, Long userId);
+    String sendMessage(ChatDataModel model);
 
-    List<Chat> list();
+    List<Chat> list(ChatFilterDataModel filter);
 
     boolean delete(Long id);
 
