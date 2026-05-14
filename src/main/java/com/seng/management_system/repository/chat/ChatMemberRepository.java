@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
-public interface ChatMemberRepository extends JpaRepository<ChatMember,Long>, JpaSpecificationExecutor<ChatMember> {
+public interface ChatMemberRepository extends JpaRepository<ChatMember, Long>, JpaSpecificationExecutor<ChatMember> {
     List<ChatMember> findByChatId(Long id);
+
     List<ChatMember> findByUserIdAndIsActivate(Long id, boolean isActivate);
+
+    ChatMember findByChatIdAndUserIdAndIsActivate(Long chatId, Long userId, boolean isActivate);
 }

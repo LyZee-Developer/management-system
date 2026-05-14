@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ChatMessageService {
     List<ChatMessage> conversation(Long chatId);
+    boolean removeAll(Long chatId);
+    boolean delete(Long chatId);
 }

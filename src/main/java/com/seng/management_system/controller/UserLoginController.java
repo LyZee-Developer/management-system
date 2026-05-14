@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seng.management_system.apiResponse.ApiResponse;
-import com.seng.management_system.constant.ApiPath;
+import com.seng.management_system.constant.RouteApi;
 import com.seng.management_system.data_model.UserLoginDataModel;
 import com.seng.management_system.data_model.UserLoginFilterDataModel;
 import com.seng.management_system.service.UserLoginService;
@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 
 @RestController
-@RequestMapping(ApiPath.USER_LOGIN)
+@RequestMapping(RouteApi.USER_LOGIN)
 public class UserLoginController {
 
     @Autowired

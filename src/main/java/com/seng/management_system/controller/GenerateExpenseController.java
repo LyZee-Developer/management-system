@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seng.management_system.apiResponse.ApiResponse;
-import com.seng.management_system.constant.ApiPath;
+import com.seng.management_system.constant.RouteApi;
 import com.seng.management_system.data_model.generateExpense.generateExpense.GenerateExpenseDataModel;
 import com.seng.management_system.data_model.generateExpense.generateExpense.GenerateExpenseFilterDataModel;
 import com.seng.management_system.exception.ApiException;
@@ -26,7 +26,7 @@ import com.seng.management_system.service.GenerateExpenseService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(ApiPath.GENERATE_EXPENSE)
+@RequestMapping(RouteApi.GENERATE_EXPENSE)
 public class GenerateExpenseController {
     
     @Autowired

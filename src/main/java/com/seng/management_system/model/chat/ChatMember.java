@@ -13,7 +13,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@JsonIncludeProperties({"id", "user", "dateJoin", "isAdmin", "isPinChat", "readCount"})
+@JsonIncludeProperties({"id", "user", "dateJoin", "isAdmin", "isPinChat", "lastSeenMessageId"})
 public class ChatMember extends BaseActivateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +31,6 @@ public class ChatMember extends BaseActivateEntity {
 
     private boolean isAdmin;
     private boolean isPinChat;
-    private Integer readCount;
+    private Long lastSeenMessageId;
+
 }

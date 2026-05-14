@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seng.management_system.apiResponse.ApiResponse;
-import com.seng.management_system.constant.ApiPath;
+import com.seng.management_system.constant.RouteApi;
 import com.seng.management_system.data_model.bug.BugDataModel;
 import com.seng.management_system.data_model.bug.BugFilterDataModel;
 import com.seng.management_system.service.BugService;
@@ -25,7 +25,7 @@ import com.seng.management_system.service.BugService;
 import jakarta.validation.constraints.Positive;
 
 @RestController
-@RequestMapping(ApiPath.BUG)
+@RequestMapping(RouteApi.BUG)
 public class BugController {
     
     @Autowired

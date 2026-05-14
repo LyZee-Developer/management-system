@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seng.management_system.apiResponse.ApiResponse;
-import com.seng.management_system.constant.ApiPath;
+import com.seng.management_system.constant.RouteApi;
 import com.seng.management_system.data_model.developer.DeveloperDataModel;
 import com.seng.management_system.data_model.developer.DeveloperFilterDataModel;
 import com.seng.management_system.service.DeveloperService;
 
 @RestController
-@RequestMapping(ApiPath.DEVELOPER)
+@RequestMapping(RouteApi.DEVELOPER)
 public class DeveloperController {
 
     @Autowired

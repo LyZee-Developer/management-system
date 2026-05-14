@@ -1,9 +1,8 @@
-package com.seng.management_system.service.impl.chat;
+package com.seng.management_system.service.chat.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.seng.management_system.constant.ChatConstant;
 import com.seng.management_system.data_model.chat.ChatDataModel;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Service;
 import com.seng.management_system.exception.ApiException;
 import com.seng.management_system.model.UserInfo;
 import com.seng.management_system.repository.UserInfoRepository;
-import com.seng.management_system.service.ChatService;
+import com.seng.management_system.service.chat.ChatService;
 
 import jakarta.transaction.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -88,14 +87,22 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public String seenChat(Long messageId, Long userId) {
-        ChatMessage chatMessage = chatMessageRepository.findById(messageId).orElseThrow(() -> new ApiException("Chat message not found!"));
-        UserInfo user = userInfoRepository.findByIdAndIsActivate(userId, Boolean.TRUE).orElseThrow(() -> new ApiException("user info not found!"));
+    @Transactional
+    public String seenChat(Long lastMessageId, Long seenById) {
+        ChatMessage chatMessage = chatMessageRepository.findById(lastMessageId).orElseThrow(() -> new ApiException("Chat message not found!"));
+        UserInfo user = userInfoRepository.findByIdAndIsActivate(seenById, Boolean.TRUE).orElseThrow(() -> new ApiException("user info not found!"));
+
+        Long totalMessage = chatMessageRepository.countByChatIdAndIsActivate(chatMessage.getChat().getId(), Boolean.TRUE);
 
         SeenMessage seen = new SeenMessage();
         seen.setChatMessage(chatMessage);
         seen.setSeenBy(user);
         seen.setSeenDate(dateNow);
+
+        //************ user have read message ***********
+        ChatMember me = chatMemberRepository.findByChatIdAndUserIdAndIsActivate(chatMessage.getChat().getId(), seenById, Boolean.TRUE);
+        me.setLastSeenMessageId(lastMessageId);
+        chatMemberRepository.save(me);
 
         seenMessageRepository.save(seen);
         return "seen success!";
@@ -168,7 +175,7 @@ public class ChatServiceImpl implements ChatService {
         message.setChat(chat);
         message.setPinChat(Boolean.FALSE);
         message.setAdmin(IsAdmin);
-        message.setReadCount(0);
+        message.setLastSeenMessageId(0L);
         message.setDateJoin(dateNow);
         message.setIsActivate(Boolean.TRUE);
         message.setCreateBy(AuthenticationUtil.getCurrentUser());

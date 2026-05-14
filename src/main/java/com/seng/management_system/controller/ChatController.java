@@ -2,7 +2,6 @@ package com.seng.management_system.controller;
 
 import com.seng.management_system.data_model.chat.ChatDataModel;
 import com.seng.management_system.data_model.chat.ChatFilterDataModel;
-import com.seng.management_system.model.chat.ChatMessage;
 import com.seng.management_system.service.chat.ChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seng.management_system.apiResponse.ApiResponse;
-import com.seng.management_system.constant.ApiPath;
-import com.seng.management_system.service.ChatService;
+import com.seng.management_system.constant.RouteApi;
+import com.seng.management_system.service.chat.ChatService;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -24,7 +23,7 @@ import jakarta.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
-@RequestMapping(ApiPath.CHAT)
+@RequestMapping(RouteApi.CHAT)
 public class ChatController {
 
     @Autowired
@@ -53,9 +52,9 @@ public class ChatController {
 
     @PostMapping("/seen")
     public ResponseEntity<Object> seenMessage(@Valid @RequestBody ChatDataModel model) {
-        Long messageId = model.getMessageId();
-        Long userId = model.getUserId();
-        return ResponseEntity.ok(ApiResponse.success(chatService.seenChat(messageId, userId)));
+        Long lastMessageId = model.getMessageId();
+        Long seenBy = model.getUserId();
+        return ResponseEntity.ok(ApiResponse.success(chatService.seenChat(lastMessageId, seenBy)));
     }
 
     @GetMapping("/delete/{id}")
