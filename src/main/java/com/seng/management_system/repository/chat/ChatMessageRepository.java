@@ -11,4 +11,5 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long>,
     List<ChatMessage> findByChatIdAndIsActivateOrderById(Long chatId, boolean isActivate);
     Optional<ChatMessage> findByIdAndIsActivate(Long chatId, boolean isActivate);
     Long countByChatIdAndIsActivate(Long chatId, boolean isActivate);
+
 }

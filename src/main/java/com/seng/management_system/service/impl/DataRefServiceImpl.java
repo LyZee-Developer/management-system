@@ -41,11 +41,16 @@ public class DataRefServiceImpl implements DataRefService {
         Map<String, List<DataRef>> children = data.stream().filter(d -> d.getParent() != null).collect(Collectors.groupingBy(d -> d.getParent().getCode()));
 
         List<DataRef> parents = data.stream().filter(d -> d.getParent() == null).peek(d -> d.setChild(children.getOrDefault(d.getCode(), new ArrayList<>()))).toList();
-        List<DataRef> paginatedResult = parents.stream()
-                .skip((filter.getPage() - 1) * filter.getRecord()) // Skip preceding pages
-                .limit(filter.getRecord())                   // Take only the current page size
+
+        String code = filter.getCode();
+        if (StringUtil.isNullOrEmpty(code)) {
+            throw new ApiException("code is required!");
+        }
+        parents = parents.stream().filter(s -> s.getCode().equals(code)).toList();
+
+        return parents.stream().skip((filter.getPage() - 1) * filter.getRecord()) // Skip preceding pages
+                .limit(filter.getRecord())                  // Take only the current page size
                 .collect(Collectors.toList());
-        return paginatedResult;
     }
 
     @Override
@@ -69,7 +74,7 @@ public class DataRefServiceImpl implements DataRefService {
 
         if (!isCreate) {
             data = dataRefRepository.findById(model.getId()).orElseThrow(() -> new ApiException("data ref not found!"));
-            parentData =  dataRefRepository.findByCode(model.getParentCode()).orElse(null);
+            parentData = dataRefRepository.findByCode(model.getParentCode()).orElse(null);
         }
 
         data.setCode(model.getCode());

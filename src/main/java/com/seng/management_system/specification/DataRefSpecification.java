@@ -22,16 +22,14 @@ public class DataRefSpecification {
             } else {
                 predicates.add(cb.equal(root.get("isActivate"), Boolean.TRUE));
             }
+
+            //filter with code
+//            predicates.add(cb.equal(root.get("code"), filter.getCode().trim()));
+
             //search
             if (!StringUtil.isNullOrEmpty(filter.getSearch())) {
                 String search = filter.getSearch().trim();
-                predicates.add(cb.or(
-                        cb.like(cb.lower(root.get("enDescription")), "%" + search.toLowerCase() + "%"),
-                        cb.like(cb.lower(root.get("description")), "%" + search.toLowerCase() + "%"),
-                        cb.like(cb.lower(root.get("name")), "%" + search.toLowerCase() + "%"),
-                        cb.like(cb.lower(root.get("enName")), "%" + search.toLowerCase() + "%"),
-                        cb.like(cb.lower(root.get("code")), "%" + search.toLowerCase() + "%")
-                ));
+                predicates.add(cb.or(cb.like(cb.lower(root.get("enDescription")), "%" + search.toLowerCase() + "%"), cb.like(cb.lower(root.get("description")), "%" + search.toLowerCase() + "%"), cb.like(cb.lower(root.get("name")), "%" + search.toLowerCase() + "%"), cb.like(cb.lower(root.get("enName")), "%" + search.toLowerCase() + "%"), cb.like(cb.lower(root.get("code")), "%" + search.toLowerCase() + "%")));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

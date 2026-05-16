@@ -63,8 +63,8 @@ public class ChatController {
     }
 
     @PostMapping("/block")
-    public ResponseEntity<Object> block() {
-        return ResponseEntity.ok(ApiResponse.success(chatService.block()));
+    public ResponseEntity<Object> block(@RequestBody ChatDataModel.BlockMessage block) {
+        return ResponseEntity.ok(ApiResponse.success(chatService.block(block)));
     }
 
     @GetMapping("/changeRoom")
@@ -85,5 +85,10 @@ public class ChatController {
     @PostMapping("/pin")
     public ResponseEntity<Object> pin() {
         return ResponseEntity.ok(ApiResponse.success(chatService.pin()));
+    }
+
+    @PostMapping("/react")
+    public ResponseEntity<Object> ReactMessage(@RequestBody ChatDataModel.ReactMessage reactMessage) {
+        return ResponseEntity.ok(ApiResponse.success(chatService.reactMessage(reactMessage)));
     }
 }

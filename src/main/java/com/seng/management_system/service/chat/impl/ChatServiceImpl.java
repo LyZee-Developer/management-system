@@ -8,15 +8,9 @@ import com.seng.management_system.constant.ChatConstant;
 import com.seng.management_system.data_model.chat.ChatDataModel;
 import com.seng.management_system.data_model.chat.ChatFilterDataModel;
 import com.seng.management_system.model.DataRef;
-import com.seng.management_system.model.chat.Chat;
-import com.seng.management_system.model.chat.ChatMember;
-import com.seng.management_system.model.chat.ChatMessage;
-import com.seng.management_system.model.chat.SeenMessage;
+import com.seng.management_system.model.chat.*;
 import com.seng.management_system.repository.DataRefRepository;
-import com.seng.management_system.repository.chat.ChatMemberRepository;
-import com.seng.management_system.repository.chat.ChatMessageRepository;
-import com.seng.management_system.repository.chat.ChatRepository;
-import com.seng.management_system.repository.chat.SeenMessageRepository;
+import com.seng.management_system.repository.chat.*;
 import com.seng.management_system.util.AuthenticationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +44,10 @@ public class ChatServiceImpl implements ChatService {
 
     @Autowired
     private ChatMessageRepository chatMessageRepository;
+
+    @Autowired
+    private ReactChatMessageRepository reactChatMessageRepository;
+
 
     private final Date dateNow = new Date();
 
@@ -100,7 +98,7 @@ public class ChatServiceImpl implements ChatService {
         seen.setSeenDate(dateNow);
 
         //************ user have read message ***********
-        ChatMember me = chatMemberRepository.findByChatIdAndUserIdAndIsActivate(chatMessage.getChat().getId(), seenById, Boolean.TRUE);
+        ChatMember me = chatMemberRepository.findByChatIdAndUserIdAndIsActivate(chatMessage.getChat().getId(), seenById, Boolean.TRUE).orElseThrow(() -> new ApiException("user not found!"));
         me.setLastSeenMessageId(lastMessageId);
         chatMemberRepository.save(me);
 
@@ -219,8 +217,42 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public boolean block() {
+    public boolean block(ChatDataModel.BlockMessage block) {
+        Long chatId = block.getChatId();
+        Long meId = block.getBlockBy();
+
+        UserInfo me = userInfoRepository.findById(meId).orElseThrow(() -> new ApiException("User reaction not found!"));
+        Chat chat = chatRepository.findByIdAndIsActivate(chatId, Boolean.TRUE).orElseThrow(() -> new ApiException("chat not found!"));
+        List<ChatMessage> messages = chatMessageRepository.findByChatIdAndIsActivateOrderById(chatId, Boolean.TRUE);
+
+        //************** disabled all message ***************
+        for (ChatMessage message : messages) {
+            message.setIsActivate(Boolean.FALSE);
+            chatMessageRepository.save(message);
+        }
+
+        DataRef type = dataRefRepository.findByCode("BLOCK").orElseThrow(() -> new ApiException("data ref not found!"));
+        ChatMessage blockMessage = new ChatMessage();
+
+        blockMessage.setSendBy(me);
+        blockMessage.setSendDate(dateNow);
+        blockMessage.setContent("All message have been remove by your member!🥹");
+        blockMessage.setType(type);
+        blockMessage.setParent(null);
+        blockMessage.setChat(chat);
+        blockMessage.setIsActivate(Boolean.TRUE);
+        blockMessage.setCreateBy(AuthenticationUtil.getCurrentUser());
+        blockMessage.setCreateDate(dateNow);
+
+        removeSelfFromChat(chatId, meId);
+
         return true;
+    }
+
+    private void removeSelfFromChat(Long chatId, Long userId) {
+        ChatMember me = chatMemberRepository.findByChatIdAndUserIdAndIsActivate(chatId, userId, Boolean.TRUE).orElseThrow(() -> new ApiException("user block not found!"));
+        me.setIsActivate(Boolean.FALSE);
+        chatMemberRepository.save(me);
     }
 
     @Override
@@ -230,6 +262,30 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public boolean pin() {
+        return true;
+    }
+
+    @Override
+    public boolean reactMessage(ChatDataModel.ReactMessage reactMessage) {
+        String emojiCode = reactMessage.getEmojiCode();
+        Long meId = reactMessage.getReactById();
+        Long messageId = reactMessage.getMessageId();
+
+        UserInfo me = userInfoRepository.findById(reactMessage.getReactById()).orElseThrow(() -> new ApiException("User reaction not found!"));
+        ChatMessage message = chatMessageRepository.findById(messageId).orElseThrow(() -> new ApiException("message not found!"));
+        DataRef emoji = dataRefRepository.findByCode(emojiCode).orElseThrow(() -> new ApiException("emoji not found!"));
+
+        //********* check user have react or not *********
+        ReactChatMessage userReactReady = reactChatMessageRepository.findByReactCodeCodeAndReactByIdAndChatMessageId(emojiCode, meId, messageId).orElse(new ReactChatMessage());
+
+        //*******remove if have react *******
+        userReactReady.setActivate(!userReactReady.isActivate());
+        userReactReady.setReactBy(me);
+        userReactReady.setReactCode(emoji);
+        userReactReady.setReactDate(dateNow);
+        userReactReady.setChatMessage(message);
+
+        reactChatMessageRepository.save(userReactReady);
         return true;
     }
 }

@@ -1,5 +1,6 @@
 package com.seng.management_system.model.chat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.seng.management_system.model.DataRef;
 import com.seng.management_system.model.UserInfo;
@@ -28,5 +29,9 @@ public class ReactChatMessage {
     private DataRef reactCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private ChatMessage chatMessage;
+
+    @Column
+    private boolean isActivate;
 }

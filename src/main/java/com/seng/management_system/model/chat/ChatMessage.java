@@ -7,6 +7,7 @@ import com.seng.management_system.model.BaseActivateEntity;
 import com.seng.management_system.model.DataRef;
 import com.seng.management_system.model.UserInfo;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,6 +42,7 @@ public class ChatMessage extends BaseActivateEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @SQLRestriction("is_activate = true")
     private List<ChatMessage> reply;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,5 +55,6 @@ public class ChatMessage extends BaseActivateEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "chatMessage", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @SQLRestriction("is_activate = true")
     private List<ReactChatMessage> reactMessages;
 }

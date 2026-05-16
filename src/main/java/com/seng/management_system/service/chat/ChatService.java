@@ -20,10 +20,12 @@ public interface ChatService {
 
     boolean delete(Long id);
 
-    boolean block();
+    boolean block(ChatDataModel.BlockMessage block);
 
     boolean changeRoomName(ChatDataModel model);
 
     boolean pin();
+
+    boolean reactMessage(ChatDataModel.ReactMessage reactMessage);
 
 }

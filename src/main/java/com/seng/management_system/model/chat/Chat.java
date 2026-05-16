@@ -7,6 +7,7 @@ import com.seng.management_system.model.UserInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.Date;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@JsonIncludeProperties({"roomName","id","members","messages"})
+@JsonIncludeProperties({"roomName","id","members","isActivate"})
 public class Chat extends BaseActivateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +25,7 @@ public class Chat extends BaseActivateEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "chat", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonManagedReference
+    @SQLRestriction("is_activate = true")
     private List<ChatMember> members;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "chat", orphanRemoval = true, cascade = CascadeType.ALL)

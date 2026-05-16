@@ -30,4 +30,19 @@ public class ChatDataModel extends BaseDataModel {
     public static class Room{
         private String roomName;
     }
+
+    @Setter
+    @Getter
+    public static class ReactMessage{
+        private Long messageId;
+        private Long reactById;
+        private String emojiCode;
+    }
+
+    @Setter
+    @Getter
+    public static class BlockMessage{
+        private Long chatId;
+        private Long blockBy;
+    }
 }
