@@ -58,7 +58,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional
-    public String create(ChatDataModel model) {
+    public Long create(ChatDataModel model) {
         String currentUser = AuthenticationUtil.getCurrentUser();
         Chat chat = new Chat();
 
@@ -81,7 +81,7 @@ public class ChatServiceImpl implements ChatService {
         // ************* User that starting message to user *************
         startMessageByUser(sender, model, chat);
 
-        return "create chat successfully!";
+        return chat.getId();
     }
 
     @Override
@@ -217,6 +217,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    @Transactional
     public boolean block(ChatDataModel.BlockMessage block) {
         Long chatId = block.getChatId();
         Long meId = block.getBlockBy();
@@ -236,7 +237,7 @@ public class ChatServiceImpl implements ChatService {
 
         blockMessage.setSendBy(me);
         blockMessage.setSendDate(dateNow);
-        blockMessage.setContent("All message have been remove by your member!🥹");
+        blockMessage.setContent("Message have been block!🥹");
         blockMessage.setType(type);
         blockMessage.setParent(null);
         blockMessage.setChat(chat);
@@ -244,6 +245,7 @@ public class ChatServiceImpl implements ChatService {
         blockMessage.setCreateBy(AuthenticationUtil.getCurrentUser());
         blockMessage.setCreateDate(dateNow);
 
+        chatMessageRepository.save(blockMessage);
         removeSelfFromChat(chatId, meId);
 
         return true;

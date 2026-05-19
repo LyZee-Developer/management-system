@@ -8,7 +8,7 @@ import com.seng.management_system.model.chat.Chat;
 
 public interface ChatService {
 
-    String create(ChatDataModel model);
+    Long create(ChatDataModel model);
 
     String addUserToChat(List<Long> userIds, Long addByUserId, Long chatId);
 

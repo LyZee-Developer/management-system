@@ -17,7 +17,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@JsonIncludeProperties({"id", "sendBy", "sendDate", "content", "type", "isPin", "delete", "reply", "seenMessages", "reactMessages"})
+@JsonIncludeProperties({"id", "sendBy", "sendDate","isActivate", "content", "type", "isPin", "delete", "reply", "seenMessages", "reactMessages"})
 public class ChatMessage extends BaseActivateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
