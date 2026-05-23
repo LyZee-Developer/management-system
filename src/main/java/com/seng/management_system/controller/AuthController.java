@@ -76,7 +76,7 @@ public class AuthController {
             }
 
             // ✅ Generate token
-            JwtResponse response = jwtService.generateToken(request.getUsername());
+            JwtResponse response = jwtService.generateToken(request);
 
             return ResponseEntity.ok(ApiResponse.success(response));
 

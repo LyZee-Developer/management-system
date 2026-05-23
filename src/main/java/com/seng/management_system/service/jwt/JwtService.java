@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.seng.management_system.data_model.UserLoginDataModel;
 import com.seng.management_system.dto.jwt.JwtResponse;
+import com.seng.management_system.model.UserInfo;
 import com.seng.management_system.model.UserLogin;
+import com.seng.management_system.repository.UserInfoRepository;
 import com.seng.management_system.repository.UserLoginRepository;
 
 import io.jsonwebtoken.Claims;
@@ -26,31 +29,57 @@ public class JwtService {
     private long expiration;
 
     @Autowired
+    UserInfoRepository userInfoRepository;
+
+    @Autowired
     UserLoginRepository userLoginRepository;
 
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public JwtResponse generateToken(String username) {
+    public Long getUserIdFromToken(String token) {
+
+        if (token == null) {
+            return null;
+        }
+
+        token = token.replace("Bearer ", "");
+
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        Object id = claims.get("id");
+
+        return id != null ? Long.valueOf(id.toString()) : null;
+    }
+
+    public JwtResponse generateToken(UserLoginDataModel username) {
 
         Date now = new Date();
         Date expiryDate = new Date(System.currentTimeMillis() + expiration);
 
+        UserLogin userLogin = userLoginRepository.findByUsername(username.getUsername()).orElse(new UserLogin());
+
+        UserInfo userInfo = userInfoRepository.findByUserLoginId(userLogin.getId());
+
         String token = Jwts.builder()
-                .setSubject(username)
+                .setSubject(username.getUsername())
+                .claim("id", userInfo.getId())
+                .claim("email", userInfo.getEmail())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
-        Long id = userLoginRepository.findByUsername(username).map(UserLogin::getId).orElse(0L);
-        return new JwtResponse(
-                id,
-                token,
-                username,
-                expiryDate,
-                "Bearer"
-        );
+        // Long id = userLoginRepository.findByUsername(username).map(UserLogin::getId).orElse(0L);
+        JwtResponse res = new JwtResponse();
+        res.setExpiredAt(expiryDate);
+        res.setUserInfo(userInfo);
+        res.setToken(token);
+        return res;
     }
 
     // public String generateToken(String username) {

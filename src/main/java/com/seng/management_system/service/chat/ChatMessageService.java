@@ -1,15 +1,19 @@
 package com.seng.management_system.service.chat;
 
-import com.seng.management_system.data_model.chat.ChatDataModel;
-import com.seng.management_system.data_model.chat.chat_message.ChatMessageDataModel;
-import com.seng.management_system.model.chat.ChatMessage;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import com.seng.management_system.data_model.chat.chat_message.ChatMessageDataModel;
+import com.seng.management_system.data_model.chat.chat_message.ChatMessageFilterDataModel;
+import com.seng.management_system.dto.ChatMessageDTO;
 
 public interface ChatMessageService {
-    List<ChatMessage> conversation(Long chatId);
+
+    Page<ChatMessageDTO> conversation(ChatMessageFilterDataModel filter, Pageable pageable);
 
     boolean clearMessage(ChatMessageDataModel model);
 
     boolean delete(Long chatId);
+
+    Long getParentChatId(Long id);
 }

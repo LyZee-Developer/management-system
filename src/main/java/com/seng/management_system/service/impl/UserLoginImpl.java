@@ -117,7 +117,7 @@ public class UserLoginImpl implements UserLoginService {
 
     @Override
     public UserInfo getUserLogin(Long userLoginId) {
-        UserInfo userInfo = userInfoRepository.findByUserLoginId(userLoginId);
+        UserInfo userInfo = userInfoRepository.findById(userLoginId).orElse(null);
 
         if (ObjectUtils.isEmpty(userInfo)) {
             throw new ApiException("User info not found!");

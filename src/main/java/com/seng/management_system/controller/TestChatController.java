@@ -1,18 +1,20 @@
 package com.seng.management_system.controller;
 
-import com.seng.management_system.model.chat.ChatMessage;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
+import com.seng.management_system.model.chat.ChatMessage;
+
 @Controller
 public class TestChatController {
+
     @MessageMapping("/sendMessage")
     @SendTo("/topic/public")
     public String sendMessage(@Payload String message) {
-        return String.format("Hello from server , you say : %s",message);
+        return String.format("Hello from server , you say : %s", message);
     }
 
     @MessageMapping("/addUser")

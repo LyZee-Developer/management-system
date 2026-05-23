@@ -1,10 +1,13 @@
 package com.seng.management_system.controller;
 
-import com.seng.management_system.data_model.chat.ChatDataModel;
-import com.seng.management_system.data_model.chat.ChatFilterDataModel;
-import com.seng.management_system.service.chat.ChatMessageService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,12 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.seng.management_system.apiResponse.ApiResponse;
 import com.seng.management_system.constant.RouteApi;
+import com.seng.management_system.data_model.chat.ChatDataModel;
+import com.seng.management_system.data_model.chat.ChatFilterDataModel;
+import com.seng.management_system.data_model.chat.chat_message.ChatMessageFilterDataModel;
+import com.seng.management_system.service.chat.ChatMessageService;
 import com.seng.management_system.service.chat.ChatService;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(RouteApi.CHAT)
@@ -31,6 +36,9 @@ public class ChatController {
 
     @Autowired
     private ChatMessageService chatMessageService;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/list")
     public ResponseEntity<Object> list(@RequestBody ChatFilterDataModel filter) {
@@ -54,12 +62,22 @@ public class ChatController {
     public ResponseEntity<Object> seenMessage(@Valid @RequestBody ChatDataModel model) {
         Long lastMessageId = model.getMessageId();
         Long seenBy = model.getUserId();
-        return ResponseEntity.ok(ApiResponse.success(chatService.seenChat(lastMessageId, seenBy)));
+        var result = chatService.seenChat(lastMessageId, seenBy);
+        messagingTemplate.convertAndSend(
+                "/topic/conversation",
+                model.getId()
+        );
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @GetMapping("/delete/{id}")
     public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {
-        return ResponseEntity.ok(ApiResponse.success(chatService.delete(id)));
+        var result = chatService.delete(id);
+        messagingTemplate.convertAndSend(
+                "/topic/conversation",
+                id
+        );
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @PostMapping("/block")
@@ -72,14 +90,19 @@ public class ChatController {
         return ResponseEntity.ok(ApiResponse.success(chatService.changeRoomName(model)));
     }
 
-    @GetMapping("/conversation/{id}")
-    public ResponseEntity<Object> conversation(@PathVariable @Positive Long id) {
-        return ResponseEntity.ok(ApiResponse.success(chatMessageService.conversation(id)));
+    @PostMapping("/conversation")
+    public ResponseEntity<Object> conversation(@RequestBody ChatMessageFilterDataModel filter, @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success(chatMessageService.conversation(filter, pageable)));
     }
 
     @PostMapping("/conversation/send")
     public ResponseEntity<Object> sendMessage(@RequestBody ChatDataModel model) {
-        return ResponseEntity.ok(ApiResponse.success(chatService.sendMessage(model)));
+        var result = chatService.sendMessage(model);
+        messagingTemplate.convertAndSend(
+                "/topic/conversation",
+                model.getId()
+        );
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @PostMapping("/pin")
@@ -89,6 +112,11 @@ public class ChatController {
 
     @PostMapping("/react")
     public ResponseEntity<Object> ReactMessage(@RequestBody ChatDataModel.ReactMessage reactMessage) {
-        return ResponseEntity.ok(ApiResponse.success(chatService.reactMessage(reactMessage)));
+        var result = chatService.reactMessage(reactMessage);
+        messagingTemplate.convertAndSend(
+                "/topic/conversation",
+                reactMessage.getChatId()
+        );
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 }

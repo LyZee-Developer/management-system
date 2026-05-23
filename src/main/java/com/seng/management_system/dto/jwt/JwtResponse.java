@@ -2,18 +2,18 @@ package com.seng.management_system.dto.jwt;
 
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
+import com.seng.management_system.model.UserInfo;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class JwtResponse {
 
-    private Long id;
     private String token;
     private String username;
     private Date expiredAt;
     private String type;
+    private UserInfo userInfo;
 }

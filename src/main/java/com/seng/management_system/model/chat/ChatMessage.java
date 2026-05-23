@@ -1,24 +1,35 @@
 package com.seng.management_system.model.chat;
 
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.annotations.SQLRestriction;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.seng.management_system.model.BaseActivateEntity;
 import com.seng.management_system.model.DataRef;
 import com.seng.management_system.model.UserInfo;
-import jakarta.persistence.*;
-import org.hibernate.annotations.SQLRestriction;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@JsonIncludeProperties({"id", "sendBy", "sendDate","isActivate", "content", "type", "isPin", "delete", "reply", "seenMessages", "reactMessages"})
+@JsonIncludeProperties({"id", "sendBy", "sendDate", "isActivate", "content", "type", "isPin", "delete", "reply", "seenMessages", "reactMessages"})
 public class ChatMessage extends BaseActivateEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,8 +44,8 @@ public class ChatMessage extends BaseActivateEntity {
     @JoinColumn(referencedColumnName = "code")
     private DataRef type;
 
-    private boolean isDelete = Boolean.FALSE;
-    private boolean isPin = Boolean.FALSE;
+    private boolean isDelete;
+    private boolean isPin;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference

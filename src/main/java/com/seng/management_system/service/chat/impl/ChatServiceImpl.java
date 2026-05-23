@@ -3,26 +3,37 @@ package com.seng.management_system.service.chat.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import com.seng.management_system.constant.ChatConstant;
 import com.seng.management_system.data_model.chat.ChatDataModel;
 import com.seng.management_system.data_model.chat.ChatFilterDataModel;
-import com.seng.management_system.model.DataRef;
-import com.seng.management_system.model.chat.*;
-import com.seng.management_system.repository.DataRefRepository;
-import com.seng.management_system.repository.chat.*;
-import com.seng.management_system.util.AuthenticationUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.seng.management_system.exception.ApiException;
+import com.seng.management_system.model.DataRef;
 import com.seng.management_system.model.UserInfo;
+import com.seng.management_system.model.chat.Chat;
+import com.seng.management_system.model.chat.ChatMember;
+import com.seng.management_system.model.chat.ChatMessage;
+import com.seng.management_system.model.chat.ReactChatMessage;
+import com.seng.management_system.model.chat.SeenMessage;
+import com.seng.management_system.repository.DataRefRepository;
 import com.seng.management_system.repository.UserInfoRepository;
+import com.seng.management_system.repository.chat.ChatMemberRepository;
+import com.seng.management_system.repository.chat.ChatMessageRepository;
+import com.seng.management_system.repository.chat.ChatRepository;
+import com.seng.management_system.repository.chat.ReactChatMessageRepository;
+import com.seng.management_system.repository.chat.SeenMessageRepository;
 import com.seng.management_system.service.chat.ChatService;
+import com.seng.management_system.service.jwt.JwtService;
+import com.seng.management_system.util.AuthenticationUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 @Service
 public class ChatServiceImpl implements ChatService {
@@ -48,6 +59,11 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     private ReactChatMessageRepository reactChatMessageRepository;
 
+    @Autowired
+    JwtService jwtService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     private final Date dateNow = new Date();
 
@@ -146,7 +162,6 @@ public class ChatServiceImpl implements ChatService {
 
         chatMemberRepository.saveAll(members);
 
-
         return "Add user to chat successfully!";
     }
 
@@ -205,7 +220,38 @@ public class ChatServiceImpl implements ChatService {
         message.setCreateBy(AuthenticationUtil.getCurrentUser());
         message.setCreateDate(dateNow);
 
+        //************* clear unread message to member ************* */
+        clearUnreadMessage(chat.getId());
+
+        saveSelfUnread(chat.getId(), sender);
         chatMessageRepository.save(message);
+    }
+
+    private boolean saveSelfUnread(Long chatId, UserInfo userInfo) {
+        Long meId = userInfo.getId();
+        ChatMember me = chatMemberRepository.findByChatIdAndUserIdAndIsActivate(chatId, meId, Boolean.TRUE).orElseThrow(() -> new ApiException("user not found!"));
+        Long remainUnread = Objects.requireNonNullElse(me.getUnread(), 0L);
+        Long increaseUnread = remainUnread + 1;
+        me.setUnread(increaseUnread);
+        chatMemberRepository.save(me);
+        return true;
+    }
+
+    //************* clear unread to member **************** */
+    private boolean clearUnreadMessage(Long chatId) {
+        String token = request.getHeader("Authorization");
+
+        Long meId = jwtService.getUserIdFromToken(token);
+        List<ChatMember> meAndmembers = chatMemberRepository.findByChatId(chatId);
+        List<ChatMember> members = meAndmembers.stream().filter(s -> !s.getUser().getId().equals(meId)).toList();
+
+        if (!members.isEmpty()) {
+            for (ChatMember member : members) {
+                member.setUnread(0L);
+                chatMemberRepository.save(member);
+            }
+        }
+        return false;
     }
 
     @Override

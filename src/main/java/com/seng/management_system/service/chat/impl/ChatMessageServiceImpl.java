@@ -1,25 +1,32 @@
 package com.seng.management_system.service.chat.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
 import com.seng.management_system.data_model.chat.chat_message.ChatMessageDataModel;
+import com.seng.management_system.data_model.chat.chat_message.ChatMessageFilterDataModel;
+import com.seng.management_system.dto.ChatMessageDTO;
 import com.seng.management_system.exception.ApiException;
+import com.seng.management_system.mapper.ChatMessageMapper;
 import com.seng.management_system.model.DataRef;
 import com.seng.management_system.model.UserInfo;
 import com.seng.management_system.model.chat.Chat;
 import com.seng.management_system.model.chat.ChatMessage;
 import com.seng.management_system.repository.DataRefRepository;
 import com.seng.management_system.repository.UserInfoRepository;
-import com.seng.management_system.repository.chat.ChatMemberRepository;
 import com.seng.management_system.repository.chat.ChatMessageRepository;
 import com.seng.management_system.repository.chat.ChatRepository;
-import com.seng.management_system.service.chat.ChatService;
 import com.seng.management_system.service.chat.ChatMessageService;
+import com.seng.management_system.specification.ChatMessageSpecification;
 import com.seng.management_system.util.AuthenticationUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Service
 public class ChatMessageServiceImpl implements ChatMessageService {
@@ -36,12 +43,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Autowired
     private ChatRepository chatRepository;
 
-    @Autowired
-    private ChatService chatService;
-
     @Override
-    public List<ChatMessage> conversation(Long chatId) {
-        return chatMessageRepository.findByChatIdAndIsActivateOrderById(chatId, Boolean.TRUE);
+    public Page<ChatMessageDTO> conversation(ChatMessageFilterDataModel filter, Pageable pageable) {
+        Specification<ChatMessage> spec = ChatMessageSpecification.build(filter);
+        Page<ChatMessage> pageData = chatMessageRepository.findAll(spec, pageable);
+        return pageData.map(ChatMessageMapper::mapToDto);
     }
 
     @Override
@@ -83,6 +89,15 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         removeAll.setCreateDate(now);
 
         chatMessageRepository.save(removeAll);
+    }
+
+    @Override
+    public Long getParentChatId(Long id) {
+        ChatMessage message = chatMessageRepository.findById(id).orElse(null);
+        if (!ObjectUtils.isEmpty(message)) {
+            return message.getChat().getId();
+        }
+        return 0L;
     }
 
     @Override
