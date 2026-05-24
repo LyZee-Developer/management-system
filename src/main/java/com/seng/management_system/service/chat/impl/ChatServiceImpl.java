@@ -105,8 +105,9 @@ public class ChatServiceImpl implements ChatService {
     public String seenChat(Long lastMessageId, Long seenById) {
         ChatMessage chatMessage = chatMessageRepository.findById(lastMessageId).orElseThrow(() -> new ApiException("Chat message not found!"));
         UserInfo user = userInfoRepository.findByIdAndIsActivate(seenById, Boolean.TRUE).orElseThrow(() -> new ApiException("user info not found!"));
+        Long chatId = chatMessage.getChat().getId();
 
-        Long totalMessage = chatMessageRepository.countByChatIdAndIsActivate(chatMessage.getChat().getId(), Boolean.TRUE);
+        Long totalMessage = chatMessageRepository.countByChatIdAndIsActivate(chatId, Boolean.TRUE);
 
         SeenMessage seen = new SeenMessage();
         seen.setChatMessage(chatMessage);
@@ -114,9 +115,11 @@ public class ChatServiceImpl implements ChatService {
         seen.setSeenDate(dateNow);
 
         //************ user have read message ***********
-        ChatMember me = chatMemberRepository.findByChatIdAndUserIdAndIsActivate(chatMessage.getChat().getId(), seenById, Boolean.TRUE).orElseThrow(() -> new ApiException("user not found!"));
+        ChatMember me = chatMemberRepository.findByChatIdAndUserIdAndIsActivate(chatId, seenById, Boolean.TRUE).orElseThrow(() -> new ApiException("user not found!"));
         me.setLastSeenMessageId(lastMessageId);
         chatMemberRepository.save(me);
+
+        clearUnreadMessage(chatId);
 
         seenMessageRepository.save(seen);
         return "seen success!";
@@ -242,8 +245,8 @@ public class ChatServiceImpl implements ChatService {
         String token = request.getHeader("Authorization");
 
         Long meId = jwtService.getUserIdFromToken(token);
-        List<ChatMember> meAndmembers = chatMemberRepository.findByChatId(chatId);
-        List<ChatMember> members = meAndmembers.stream().filter(s -> !s.getUser().getId().equals(meId)).toList();
+        List<ChatMember> meAndMember = chatMemberRepository.findByChatId(chatId);
+        List<ChatMember> members = meAndMember.stream().filter(s -> !s.getUser().getId().equals(meId)).toList();
 
         if (!members.isEmpty()) {
             for (ChatMember member : members) {
