@@ -27,6 +27,7 @@ public class ChatDataModel extends BaseDataModel {
     private String content;
     private String type; // SOUND, Audio, Video, Image, Other...\
     private Long parentId; // parent of chat message
+    
 
     public static class Room {
 

@@ -121,22 +121,42 @@ public class ChatServiceImpl implements ChatService {
 
         clearUnreadMessage(chatId);
 
+        //********** loading user are typing *********
+        triggerLoadingTyping(user, chatMessage.getChat(),true);
+
         seenMessageRepository.save(seen);
         return "seen success!";
     }
 
+    private void triggerLoadingTyping(UserInfo user, Chat chat , boolean isTyping) {
+        ChatMessage typing = chatMessageRepository.findBySendByIdAndTypeCodeAndIsActivate(user.getId(), ChatConstant.WRITING, Boolean.TRUE).orElse(null);
+        if (Objects.isNull(typing)) {
+            ChatDataModel model = new ChatDataModel();
+            model.setType(ChatConstant.WRITING);
+            startMessageByUser(user, model, chat);
+        } else {
+            typing.setIsActivate(isTyping);
+            chatMessageRepository.save(typing);
+        }
+    }
+
     @Override
     public String sendMessage(ChatDataModel model) {
-        UserInfo sender = userInfoRepository.findById(model.getSendBy()).orElseThrow(() -> new ApiException("Sender not found!"));
+        Long sendById = model.getSendBy();
+        UserInfo sender = userInfoRepository.findById(sendById).orElseThrow(() -> new ApiException("Sender not found!"));
         Chat chat = chatRepository.findByIdAndIsActivate(model.getId(), Boolean.TRUE).orElseThrow(() -> new ApiException("chat not found!"));
+
         startMessageByUser(sender, model, chat);
+        //********** hide loading typing *********
+        triggerLoadingTyping(sender, chat,false);
+
         return "sent";
     }
 
     @Override
     public String addUserToChat(List<Long> userIds, Long addByUserId, Long chatId) {
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ApiException("chat not found!"));
-        UserInfo addByUser = userInfoRepository.findByIdAndIsActivate(addByUserId, Boolean.TRUE).orElseThrow(() -> new ApiException("chat not found!"));
+        UserInfo addByUser = userInfoRepository.findByIdAndIsActivate(addByUserId, Boolean.TRUE).orElseThrow(() -> new ApiException("user not found!"));
         List<UserInfo> users = new ArrayList<>();
         List<ChatMember> members = new ArrayList<>();
 
@@ -263,6 +283,14 @@ public class ChatServiceImpl implements ChatService {
         chat.setIsActivate(Boolean.FALSE);
         chatRepository.save(chat);
         return true;
+    }
+
+    @Override
+    public Long unTyping(Long userId, Long chatId) {
+        UserInfo user = userInfoRepository.findByIdAndIsActivate(userId, Boolean.TRUE).orElseThrow(() -> new ApiException("user info not found!"));
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ApiException("chat not found!"));
+        triggerLoadingTyping(user, chat, false);
+        return chatId;
     }
 
     @Override

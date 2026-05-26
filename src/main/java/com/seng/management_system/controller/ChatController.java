@@ -8,13 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.seng.management_system.apiResponse.ApiResponse;
 import com.seng.management_system.constant.RouteApi;
@@ -78,6 +72,16 @@ public class ChatController {
                 id
         );
         return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    @GetMapping("/un_typing")
+    public ResponseEntity<Object> removeMessage(@RequestParam Long userId, @RequestParam Long chatId) {
+        chatService.unTyping(userId, chatId);
+        messagingTemplate.convertAndSend(
+                "/topic/conversation",
+                chatId
+        );
+        return ResponseEntity.ok(ApiResponse.success(chatId));
     }
 
     @PostMapping("/block")

@@ -112,4 +112,16 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         return true;
     }
 
+    @Override
+    public Long removeMessage(Long messageId) {
+        String me = AuthenticationUtil.getCurrentUser();
+        Date now = new Date();
+        ChatMessage message = chatMessageRepository.findByIdAndIsActivate(messageId, Boolean.TRUE).orElseThrow(() -> new ApiException("chat message not found!"));
+        message.setIsActivate(Boolean.FALSE);
+        message.setUpdateDate(now);
+        message.setUpdateBy(me);
+        chatMessageRepository.save(message);
+        return message.getChat().getId();
+    }
+
 }

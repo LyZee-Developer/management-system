@@ -20,6 +20,8 @@ public interface ChatService {
 
     boolean delete(Long id);
 
+    Long unTyping(Long userId, Long chatId);
+
     boolean block(ChatDataModel.BlockMessage block);
 
     boolean changeRoomName(ChatDataModel model);

@@ -15,5 +15,8 @@ public interface ChatMessageService {
 
     boolean delete(Long chatId);
 
+    Long removeMessage(Long messageId);
+
+
     Long getParentChatId(Long id);
 }
