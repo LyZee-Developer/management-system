@@ -75,8 +75,8 @@ public class ChatController {
     }
 
     @GetMapping("/un_typing")
-    public ResponseEntity<Object> removeMessage(@RequestParam Long userId, @RequestParam Long chatId) {
-        chatService.unTyping(userId, chatId);
+    public ResponseEntity<Object> removeMessage(@RequestParam Long userId, @RequestParam Long chatId, @RequestParam boolean isTyping) {
+        chatService.unTyping(userId, chatId,isTyping);
         messagingTemplate.convertAndSend(
                 "/topic/conversation",
                 chatId

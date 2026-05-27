@@ -20,7 +20,7 @@ public interface ChatService {
 
     boolean delete(Long id);
 
-    Long unTyping(Long userId, Long chatId);
+    Long unTyping(Long userId, Long chatId, boolean isTyping);
 
     boolean block(ChatDataModel.BlockMessage block);
 

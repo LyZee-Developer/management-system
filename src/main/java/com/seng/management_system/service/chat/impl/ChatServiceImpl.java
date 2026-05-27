@@ -107,8 +107,6 @@ public class ChatServiceImpl implements ChatService {
         UserInfo user = userInfoRepository.findByIdAndIsActivate(seenById, Boolean.TRUE).orElseThrow(() -> new ApiException("user info not found!"));
         Long chatId = chatMessage.getChat().getId();
 
-        Long totalMessage = chatMessageRepository.countByChatIdAndIsActivate(chatId, Boolean.TRUE);
-
         SeenMessage seen = new SeenMessage();
         seen.setChatMessage(chatMessage);
         seen.setSeenBy(user);
@@ -122,14 +120,14 @@ public class ChatServiceImpl implements ChatService {
         clearUnreadMessage(chatId);
 
         //********** loading user are typing *********
-        triggerLoadingTyping(user, chatMessage.getChat(),true);
+//        triggerLoadingTyping(user, chatMessage.getChat(),true);
 
         seenMessageRepository.save(seen);
         return "seen success!";
     }
 
     private void triggerLoadingTyping(UserInfo user, Chat chat , boolean isTyping) {
-        ChatMessage typing = chatMessageRepository.findBySendByIdAndTypeCodeAndIsActivate(user.getId(), ChatConstant.WRITING, Boolean.TRUE).orElse(null);
+        ChatMessage typing = chatMessageRepository.findBySendByIdAndChatIdAndTypeCodeAndIsActivate(user.getId(),chat.getId(), ChatConstant.WRITING, Boolean.TRUE).orElse(null);
         if (Objects.isNull(typing)) {
             ChatDataModel model = new ChatDataModel();
             model.setType(ChatConstant.WRITING);
@@ -147,9 +145,8 @@ public class ChatServiceImpl implements ChatService {
         Chat chat = chatRepository.findByIdAndIsActivate(model.getId(), Boolean.TRUE).orElseThrow(() -> new ApiException("chat not found!"));
 
         startMessageByUser(sender, model, chat);
-        //********** hide loading typing *********
-        triggerLoadingTyping(sender, chat,false);
 
+        triggerLoadingTyping(sender, chat,false);
         return "sent";
     }
 
@@ -246,7 +243,11 @@ public class ChatServiceImpl implements ChatService {
         //************* clear unread message to member ************* */
         clearUnreadMessage(chat.getId());
 
-        saveSelfUnread(chat.getId(), sender);
+        if(!ObjectUtils.isEmpty(model.getType()) && chat.getId() > 0){
+            if(!model.getType().equals(ChatConstant.WRITING)){
+                saveSelfUnread(chat.getId(), sender);
+            }
+        }
         chatMessageRepository.save(message);
     }
 
@@ -286,10 +287,10 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Long unTyping(Long userId, Long chatId) {
+    public Long unTyping(Long userId, Long chatId, boolean isTyping) {
         UserInfo user = userInfoRepository.findByIdAndIsActivate(userId, Boolean.TRUE).orElseThrow(() -> new ApiException("user info not found!"));
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ApiException("chat not found!"));
-        triggerLoadingTyping(user, chat, false);
+        triggerLoadingTyping(user, chat, isTyping);
         return chatId;
     }
 
